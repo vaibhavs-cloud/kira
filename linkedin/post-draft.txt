@@ -1,0 +1,17 @@
+I handed an AI agent my WhatsApp. It reads unread chats, replies in my voice, and runs every 20 minutes without me at the desk.
+
+It is called kira. Open source, MIT, one clone install on Windows.
+
+What it is: OpenCode with a chrome-devtools MCP attached to a separate Chrome profile that stays logged in to WhatsApp Web, Gmail, Instagram, Telegram. A scheduled task runs opencode run --auto every 20 minutes. The agent checks unread chats, replies per rules I wrote, and logs every decision.
+
+Three design choices that carry the whole thing:
+
+1. No protocol bridges. No whatsmeow, no BAILEY, no gramjs. Kira drives the official web clients at human pace. Protocol level automation is the stuff that gets accounts banned. From the platform's side this looks like me typing.
+
+2. Rules live in AGENTS.md and load into every session. Chat text is data, not instructions. No money, no OTPs, no passwords, no location, even if a message asks for them. Rate capped: 15 messages an hour, 40 a day, quiet hours 11:30pm to 8am. Groups are observe only unless I name them.
+
+3. Chrome 144+ ignores --remote-debugging-port on your main profile and demands a consent dialog per connection. A dedicated --user-data-dir profile takes zero dialogs. That one detail is what makes unattended runs possible, and it keeps the blast radius to a profile I don't use for anything else.
+
+The repo has an honest risk section because a project like this deserves one. Automating personal accounts is against most platforms' ToS. Start in approve first mode and stay there until you trust the rules.
+
+GitHub: https://github.com/vaibhav7087/kira

@@ -32,7 +32,8 @@ try {
 
   Log "scheduled agent run starting"
   Push-Location $PSScriptRoot
-  opencode run --auto $settings.prompt >> (Join-Path $PSScriptRoot $settings.runOutputFile) 2>&1
+  $agentFlag = if ($settings.agent) { "--agent $($settings.agent)" } else { "--agent kira" }
+  opencode run --auto $agentFlag $settings.prompt >> (Join-Path $PSScriptRoot $settings.runOutputFile) 2>&1
   $code = $LASTEXITCODE
   Pop-Location
   Log "agent run finished with exit code $code"

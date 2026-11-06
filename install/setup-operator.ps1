@@ -7,7 +7,7 @@ param(
   [string]$WorkDir = (Join-Path $env:USERPROFILE ".opencode-operator"),
   [string]$ChromePath = "",
   [string[]]$StartUrls = @("https://web.whatsapp.com"),
-  [string]$Prompt = "check unread chats and handle as per AGENTS.md Kira rules",
+  [string]$Prompt = "Check WhatsApp Web unread chats via window.__kira. If unread, summarize and draft replies per rules; if none, report 0 unread.",
   [string]$QuietStart = "23:30",
   [string]$QuietEnd = "08:00",
   [switch]$NoLaunch,
@@ -49,6 +49,8 @@ $files = @{
   "start-operator-chrome.ps1" = Join-Path $tplDir "start-operator-chrome.ps1"
   "run-operator.ps1"          = Join-Path $tplDir "run-operator.ps1"
   "AGENTS.kira.md"            = Join-Path $tplDir "AGENTS.kira.md"
+  "kira-helpers.js"           = Join-Path $tplDir "kira-helpers.js"
+  "kira.md"                   = Join-Path $tplDir "kira.md"
 }
 foreach ($name in $files.Keys) {
   $dest = Join-Path $WorkDir $name
@@ -56,12 +58,20 @@ foreach ($name in $files.Keys) {
   else { Copy-Item $files[$name] $dest -Force; Write-Host "[ok] $name" }
 }
 
+# Install global @kira agent and kira-helpers.js into ~/.config/opencode
+$globalAgentsDir = Join-Path $env:USERPROFILE ".config\opencode\agents"
+New-Item -ItemType Directory -Force -Path $globalAgentsDir | Out-Null
+Copy-Item (Join-Path $tplDir "kira.md") (Join-Path $globalAgentsDir "kira.md") -Force
+Copy-Item (Join-Path $tplDir "kira-helpers.js") (Join-Path $env:USERPROFILE ".config\opencode\kira-helpers.js") -Force
+Write-Host "[ok] installed @kira agent and kira-helpers.js"
+
 $settings = [ordered]@{
   port        = $Port
   workDir     = $WorkDir
   profileDir  = $profileDir
   chromePath  = $chromeFound
   startUrls   = $StartUrls
+  agent       = "kira"
   prompt      = $Prompt
   quietStart  = $QuietStart
   quietEnd    = $QuietEnd

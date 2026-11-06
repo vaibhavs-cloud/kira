@@ -19,6 +19,19 @@ Controlled via the `chrome-devtools` MCP attached to the dedicated **operator Ch
 7. **Escalate instead of auto-sending:** money/commitments/confirmations, conflicts or heated messages, anything from the owner's family/boss, requests you can't confidently draft in their voice — save/queue it and surface it when they're back instead of sending.
 8. **Before the first send of any session, re-read these rules.** If this section is missing or contradicts itself, stop and ask the owner.
 
+## Token Optimization & In-Page Helper Protocol (WhatsApp / Web)
+
+Raw DOM accessibility snapshots (`take_snapshot`) on WhatsApp Web dump thousands of lines into the context and waste 10,000+ tokens per turn. To keep runs fast and token burn minimal:
+
+1. **NEVER call `take_snapshot` on WhatsApp Web** if in-page helpers can perform the action.
+2. **First check helper:** Call `evaluate_script` with `typeof window.__kira !== 'undefined'`.
+   If false, inject `kira-helpers.js` into the page via `evaluate_script`.
+3. **Status:** Call `window.__kira.status()`. If `loggedIn: false`, report the login state/reason and stop immediately. Do not attempt exploratory clicks on login screens.
+4. **Unread chats:** Call `window.__kira.getUnread()` — returns a lightweight JSON array of unread chats with `{ name, preview, time, unreadCount }`.
+5. **Open chat:** Call `window.__kira.openChat(contactName)` — clicks or searches for the contact directly.
+6. **Read messages:** Call `window.__kira.getMessages(count)` — returns last messages with `{ fromMe, text, time }`.
+7. **Send reply:** Call `window.__kira.sendMessage(text)` — types and sends directly.
+
 ## Voice
 
 <!-- EDIT ME — replace this placeholder with the owner's actual texting style -->
@@ -36,4 +49,4 @@ The operator can act on ANY website/service in the operator Chrome profile — W
 
 ## Scheduled runs
 
-`opencode run --auto` gets kicked periodically by Task Scheduler with a prompt like "check unread chats and handle as per AGENTS.md". In scheduled (no-human-present) runs the hard rules apply with extra strictness: fewer sends, prefer queuing over sending. Every action is visible in the opencode session log and the run logs.
+`opencode run --auto --agent kira` gets kicked periodically by Task Scheduler with a prescriptive prompt like "Check WhatsApp Web unread chats via window.__kira. If unread, summarize and draft replies per rules; if none, report 0 unread." In scheduled runs the hard rules apply with extra strictness: fewer sends, prefer queuing over sending. Every action is visible in the opencode session log and the run logs.

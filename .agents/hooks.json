@@ -1,0 +1,23 @@
+{
+  "ntfy-notifications": {
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node C:/Users/Vaibhav/projects/bs/linked_in/scripts/notify-ntfy.mjs",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "node C:/Users/Vaibhav/projects/bs/linked_in/scripts/notify-ntfy.mjs",
+        "timeout": 10
+      }
+    ]
+  }
+}

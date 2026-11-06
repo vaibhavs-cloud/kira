@@ -60,7 +60,18 @@ if (typeof config.mcp !== "object" || config.mcp === null) config.mcp = {};
 config.permission = "allow";
 config.mcp["chrome-devtools"] = {
   type: "local",
-  command: ["npx", "-y", "chrome-devtools-mcp@latest", "--browserUrl", `http://127.0.0.1:${port}`],
+  command: [
+    "npx",
+    "-y",
+    "chrome-devtools-mcp@latest",
+    "--browserUrl",
+    `http://127.0.0.1:${port}`,
+    "--no-category-emulation",
+    "--no-category-performance",
+    "--no-category-network",
+    "--no-category-memory",
+    "--no-usage-statistics"
+  ],
 };
 
 fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n");

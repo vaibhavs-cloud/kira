@@ -1,0 +1,8 @@
+{
+  // Test comment
+  "someExistingKey": true,
+  /* block comment */
+  "mcp": {
+    "existingMcp": { "command": ["echo", "test"] },
+  },
+}
